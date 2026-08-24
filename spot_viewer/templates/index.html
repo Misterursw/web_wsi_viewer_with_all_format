@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WSI Spot Viewer</title>
+  <link rel="stylesheet" href="static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/openseadragon.min.js"></script>
+</head>
+<body>
+  <header id="topbar">
+    <span class="logo">WSI Spot Viewer</span>
+    <div class="topbar-actions">
+      <label class="control-label">Gene <select id="gene-select"></select></label>
+      <label class="control-label">Reducer <select id="reducer-select">
+        <option value="mean">mean</option>
+        <option value="median">median</option>
+        <option value="max">max</option>
+      </select></label>
+      <label class="control-label">Opacity <input id="opacity" type="range" min="0.05" max="1" step="0.05" value="0.65"></label>
+      <button id="btn-home" title="回到全图">Home</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <aside id="sidebar">
+      <div id="browser-header">
+        <span>Slides</span>
+        <input id="slide-filter" type="text" placeholder="filter slide">
+      </div>
+      <div id="slide-list"></div>
+      <div id="info-panel">
+        <div class="panel-title">Current</div>
+        <div id="spot-info">未加载</div>
+      </div>
+      <div id="thumb-panel">
+        <div class="panel-title">Thumbnail</div>
+        <img id="thumb-img" alt="" style="display:none">
+        <div id="thumb-empty">请选择 slide</div>
+      </div>
+    </aside>
+
+    <section id="viewer-area">
+      <div id="viewer-header">
+        <span id="viewer-title">— 未加载 —</span>
+        <span id="status">loading</span>
+      </div>
+      <div id="osd"></div>
+      <canvas id="spot-overlay"></canvas>
+      <div id="legend">
+        <span id="legend-lo">low</span>
+        <div id="legend-bar"></div>
+        <span id="legend-hi">high</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="static/viewer.js"></script>
+</body>
+</html>

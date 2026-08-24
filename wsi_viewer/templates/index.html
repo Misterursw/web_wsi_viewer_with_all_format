@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WSI 阅片工具</title>
+  <link rel="stylesheet" href="static/style.css">
+  <!-- OpenSeadragon CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/openseadragon.min.js"></script>
+</head>
+<body>
+  <!-- ── 顶部导航栏 ── -->
+  <header id="topbar">
+    <span class="logo">🔬 WSI 阅片工具</span>
+    <div class="topbar-actions">
+      <button id="btn-layout-1" class="layout-btn active" title="单图">⬜</button>
+      <button id="btn-layout-2" class="layout-btn" title="双图对比">⬜⬜</button>
+      <button id="btn-layout-4" class="layout-btn" title="四图对比">⊞</button>
+      <label class="toggle-label">
+        <input type="checkbox" id="chk-sync" checked>
+        同步联动
+      </label>
+      <button id="btn-clear-all" title="关闭所有切片">✕ 全部关闭</button>
+    </div>
+  </header>
+
+  <!-- ── 主体区域 ── -->
+  <div id="main">
+    <!-- 左侧：文件浏览器 + 缩略图 -->
+    <aside id="sidebar">
+      <!-- 文件树 -->
+      <div id="file-browser">
+        <div id="browser-header">
+          <span>文件浏览</span>
+          <input id="stain-filter" type="text" placeholder="染色过滤 (HE, PAS...)" />
+        </div>
+        <div id="file-tree"></div>
+      </div>
+
+      <!-- 病例关联切片 -->
+      <div id="case-panel" class="hidden">
+        <div class="panel-title">同病例切片 <span id="case-id-label"></span></div>
+        <div id="case-slides-list"></div>
+      </div>
+
+      <!-- 缩略图 -->
+      <div id="thumb-panel">
+        <div class="panel-title">缩略图</div>
+        <div id="thumb-container">
+          <img id="thumb-img" src="" alt="缩略图" style="display:none">
+          <div id="thumb-empty">请选择切片</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 右侧：查看器区域 -->
+    <div id="viewer-area">
+      <!-- 查看器格子 -->
+      <div id="viewer-grid" class="grid-1">
+        <div class="viewer-cell" id="cell-0">
+          <div class="cell-header">
+            <span class="cell-title">— 未加载 —</span>
+            <div class="cell-actions">
+              <span class="cell-info-btn" title="切片信息">ℹ</span>
+              <span class="cell-close-btn" title="关闭">✕</span>
+            </div>
+          </div>
+          <div class="osd-container" id="osd-0"></div>
+          <div class="cell-placeholder"><p>双击文件树中的 .ndpi 文件<br>以在此处打开</p></div>
+        </div>
+        <div class="viewer-cell hidden" id="cell-1">
+          <div class="cell-header">
+            <span class="cell-title">— 未加载 —</span>
+            <div class="cell-actions">
+              <span class="cell-info-btn" title="切片信息">ℹ</span>
+              <span class="cell-close-btn" title="关闭">✕</span>
+            </div>
+          </div>
+          <div class="osd-container" id="osd-1"></div>
+          <div class="cell-placeholder"><p>在文件树右键选择<br>"在面板 2 打开"</p></div>
+        </div>
+        <div class="viewer-cell hidden" id="cell-2">
+          <div class="cell-header">
+            <span class="cell-title">— 未加载 —</span>
+            <div class="cell-actions">
+              <span class="cell-info-btn" title="切片信息">ℹ</span>
+              <span class="cell-close-btn" title="关闭">✕</span>
+            </div>
+          </div>
+          <div class="osd-container" id="osd-2"></div>
+          <div class="cell-placeholder"><p>在文件树右键选择<br>"在面板 3 打开"</p></div>
+        </div>
+        <div class="viewer-cell hidden" id="cell-3">
+          <div class="cell-header">
+            <span class="cell-title">— 未加载 —</span>
+            <div class="cell-actions">
+              <span class="cell-info-btn" title="切片信息">ℹ</span>
+              <span class="cell-close-btn" title="关闭">✕</span>
+            </div>
+          </div>
+          <div class="osd-container" id="osd-3"></div>
+          <div class="cell-placeholder"><p>在文件树右键选择<br>"在面板 4 打开"</p></div>
+        </div>
+      </div>
+
+      <!-- 底部标注工具栏 -->
+      <div id="annotation-bar">
+        <span class="ann-label">标注：</span>
+        <button id="btn-ann-rect" class="ann-btn" title="矩形框选">⬜ 画框</button>
+        <button id="btn-ann-clear" class="ann-btn">🗑 清除全部</button>
+        <button id="btn-ann-save" class="ann-btn">💾 保存</button>
+        <button id="btn-ann-load" class="ann-btn">📂 加载</button>
+        <span id="ann-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 切片信息弹窗 -->
+  <div id="info-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>切片信息</span>
+        <span class="modal-close" id="info-modal-close">✕</span>
+      </div>
+      <div id="info-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 右键菜单 -->
+  <div id="ctx-menu" class="hidden">
+    <div class="ctx-item" id="ctx-open-0">在面板 1 打开</div>
+    <div class="ctx-item" id="ctx-open-1">在面板 2 打开</div>
+    <div class="ctx-item" id="ctx-open-2">在面板 3 打开</div>
+    <div class="ctx-item" id="ctx-open-3">在面板 4 打开</div>
+  </div>
+
+  <script src="static/viewer.js"></script>
+</body>
+</html>

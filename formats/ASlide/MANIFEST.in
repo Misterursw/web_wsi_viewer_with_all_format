@@ -1,0 +1,51 @@
+# Include all Python files
+recursive-include Aslide *.py
+
+# Include OpenCV library files
+recursive-include Aslide/opencv/lib *.so
+recursive-include Aslide/opencv/lib *.so.*
+
+# Include library files
+recursive-include Aslide/kfb/lib *.so
+recursive-include Aslide/kfb/icc *.icm
+recursive-include Aslide/tmap *.py
+recursive-include Aslide/tmap/icc *.icm
+recursive-include Aslide/sdpc/lib *
+recursive-include Aslide/sdpc/include *
+recursive-include Aslide/sdpc *.py
+recursive-include Aslide/tron *.py
+recursive-include Aslide/tron/lib *.so
+recursive-include Aslide/tron/lib *.h
+
+# Include VSI files
+recursive-include Aslide/vsi *.py
+include Aslide/vsi/vsi_slide.py
+include Aslide/vsi/bioformats_vsi_slide.py
+include Aslide/vsi/__init__.py
+
+# Include MDS files
+recursive-include Aslide/mds *.py
+recursive-include Aslide/mds/icc *.icm
+
+# Include QPTiff files
+recursive-include Aslide/qptiff *.py
+
+# Include iSyntax files
+recursive-include Aslide/isyntax *.py
+
+# Include DYJ files
+recursive-include Aslide/dyj *.py
+recursive-include Aslide/dyj/lut *.lut
+
+# Include IBL files
+recursive-include Aslide/ibl *.py
+
+# Include ZYP files
+recursive-include Aslide/zyp *.py
+
+# Include BIF files
+recursive-include Aslide/bif *.py
+
+# Include documentation
+include README.md
+include LICENSE
